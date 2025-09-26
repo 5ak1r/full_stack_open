@@ -1,5 +1,27 @@
 import { useState } from 'react'
 
+const MostVotes = ({anecdotes, votes}) => {
+  if(votes.every(item => item === 0)) {
+    return (
+      <div>
+        <p>No anecdotes have been voted for yet.</p>
+      </div>
+    )
+  }
+
+  const highestVotesIndex = votes.reduce((maxIdx, current, i, array) => 
+  current > array[maxIdx] ? i : maxIdx, 0);
+
+  const voteLabelHighest = votes[highestVotesIndex] === 1 ? 'vote': 'votes'
+
+  return (
+    <div>
+      {anecdotes[highestVotesIndex]}
+      <div>This anecdote has {votes[highestVotesIndex]} {voteLabelHighest}.</div>
+    </div>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -32,11 +54,7 @@ const App = () => {
     setVotes(copy)
   }
 
-  const highestVotesIndex = votes.reduce((maxIdx, current, i, array) => 
-  current > array[maxIdx] ? i : maxIdx, 0);
-
   const voteLabel = votes[selected] === 1 ? 'vote': 'votes'
-  const voteLabelHighest = votes[highestVotesIndex] === 1 ? 'vote': 'votes'
 
   return (
     <div>
@@ -49,8 +67,7 @@ const App = () => {
       </div>
 
       <h1>Anecdote with the most votes</h1>
-      {anecdotes[highestVotesIndex]}
-      <div>This anecdote has {votes[highestVotesIndex]} {voteLabelHighest}.</div>
+      <MostVotes anecdotes={anecdotes} votes={votes} />
 
     </div>
   )
