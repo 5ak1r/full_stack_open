@@ -10,43 +10,42 @@ const Statistics = ({good, neutral, bad, total}) => {
       </p>
     )
   }
-  else {
-    return (
-      <div>
-        <table>
-          <thead>
-            <h1>statistics</h1>
-          </thead>
-          <tbody>
-            <tr>
-              <td>good</td>
-              <td>{good}</td>
-            </tr>
-            <tr>
-              <td>neutral</td>
-              <td>{neutral}</td>
-            </tr>
-            <tr>
-              <td>bad</td>
-              <td>{bad}</td>
-            </tr>
-            <tr>
-              <td>total</td>
-              <td>{total}</td>
-            </tr>
-            <tr>
-              <td>average</td>
-              <td>{(good - bad) / total}</td>
-            </tr>
-            <tr>
-              <td>positive</td>
-              <td>{good / total * 100} %</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    )
-  }
+
+  return (
+    <div>
+      <table>
+        <thead>
+          <h1>statistics</h1>
+        </thead>
+        <tbody>
+          <tr>
+            <td>good</td>
+            <td>{good}</td>
+          </tr>
+          <tr>
+            <td>neutral</td>
+            <td>{neutral}</td>
+          </tr>
+          <tr>
+            <td>bad</td>
+            <td>{bad}</td>
+          </tr>
+          <tr>
+            <td>total</td>
+            <td>{total}</td>
+          </tr>
+          <tr>
+            <td>average</td>
+            <td>{(good - bad) / total}</td>
+          </tr>
+          <tr>
+            <td>positive</td>
+            <td>{good / total * 100} %</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  )
 }
 
 const App = () => {
