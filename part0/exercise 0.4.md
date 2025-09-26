@@ -9,7 +9,7 @@ sequenceDiagram
     browser->>server: note contents
     deactivate server
 
-    Note right of server: form data is sent with HTTP post
+    Note left of server: form data is sent with HTTP post
 
     browser->>server: GET https://studies.cs.helsinki.fi/exampleapp/notes
     activate server
