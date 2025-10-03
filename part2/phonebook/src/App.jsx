@@ -19,11 +19,11 @@ const App = () => {
   const addName = (event) => {
     event.preventDefault()
 
-    persons.forEach((person, index) => {
-      if (person.name === newName) {
-        alert(`${newName} is already added to phonebook`)
-      }
-    })
+    if(persons.some(person => person.name === newName)) {
+      alert(`${newName} is already added to phonebook`)
+      setNewName('')
+      return
+    }
 
     const nameObject = {
       name: newName,
