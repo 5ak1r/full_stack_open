@@ -20,15 +20,15 @@ const Country = ({ country }) => {
   )
 }
 
-const CountryName = ({ name }) => {
+const CountryName = ({ name, onClick, index }) => {
   return (
     <div>
-      {name}
+      {name} <button onClick={() => onClick(index)}>show</button>
     </div>
   )
 }
 
-const Countries = ({ countries }) => {
+const Countries = ({ countries, onClick }) => {
 
   if(!countries || countries.length > 10) {
     return (
@@ -42,8 +42,14 @@ const Countries = ({ countries }) => {
     return <Country country={countries[0]} />
   }
 
-  return countries.map((country, index) => <CountryName key={index} name={country.name.common} />)
-
+  return countries.map((country, index) => (
+    <CountryName
+      key={index}
+      name={country.name.common}
+      onClick={onClick}
+      index={index}
+    />
+  ))
 }
 
 export default Countries
