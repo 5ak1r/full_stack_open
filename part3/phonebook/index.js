@@ -16,7 +16,12 @@ app.use(express.json())
 
 app.use(requestLogger)*/
 
-//app.use(morgan('tiny'))
+app.use(morgan(
+    'tiny',
+    { skip: (request, response) => { return request.method === 'POST'}}
+  )
+)
+
 morgan.token('data', (req, res) => { return JSON.stringify(req.body) })
 
 app.use(morgan(
