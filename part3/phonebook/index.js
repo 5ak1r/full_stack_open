@@ -1,7 +1,29 @@
 const express = require('express')
+const morgan  = require('morgan')
+
 const app = express()
 
 app.use(express.json())
+
+//creating our own middleware
+/*const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:', request.path)
+  console.log('Body:', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)*/
+
+//app.use(morgan('tiny'))
+morgan.token('data', (req, res) => { return JSON.stringify(req.body) })
+
+app.use(morgan(
+    ':method :url :status :res[content-length] - :response-time ms :data',
+    { skip: (request, response) => { return request.method !== 'POST' } }
+  )
+)
 
 let phonebook = [
   { 
@@ -72,7 +94,7 @@ app.post('/api/persons', (request, response) => {
   const person = {
     name: body.name,
     number: body.number || false,
-    id: Math.floor(Math.random() * 1e6),
+    id: String(Math.floor(Math.random() * 1e9)),
   }
   
   phonebook = phonebook.concat(person)
@@ -87,6 +109,15 @@ app.get('/info', (request, response) => {
     <p>${time}
     `)
 })
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({
+    error: 'unknown endpoint'
+  })
+}
+
+app.use(unknownEndpoint)
+
 
 const PORT = 3001
 
