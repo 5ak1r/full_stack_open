@@ -116,8 +116,8 @@ const App = () => {
               setNewName('')
               setNewNumber('')
             })
-            .catch(() => {
-              createNotification(`Failed to add ${newName}`, 'error')
+            .catch(error => {
+              createNotification(error.response.data.error)
             })
         }
       })
