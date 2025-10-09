@@ -71,20 +71,24 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  Person.find({name: body.name}).then(() => {
-    return response.status(400).json ({
-      error: 'name must be unique'
+  Person.findOne({name: body.name})
+    .then(existingPerson => {
+      if(existingPerson) {
+        return response.status(400).json ({
+          error: 'name must be unique'
+        })
+      }
+
+      const person = new Person({
+        name: body.name,
+        number: body.number,
+      })
+      
+      return person.save().then(savedPerson => {
+        response.json(savedPerson)
+      })
     })
-  })
-  
-  const person = new Person({
-    name: body.name,
-    number: body.number,
-  })
-  
-  person.save().then(savedPerson => {
-    response.json(savedPerson)
-  })
+    .catch(error => console.log('Error adding person', error))
 })
 
 app.get('/info', (request, response) => {
