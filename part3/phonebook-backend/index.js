@@ -55,7 +55,7 @@ app.get('/api/persons/:id', (request, response) => {
     .catch(error => next(error))
 })
 
-app.put('/api/notes/:id', (request, response, next) => {
+app.put('/api/persons/:id', (request, response, next) => {
   const { name, number } = request.body
 
   Person.findById(request.params.id)
