@@ -34,7 +34,7 @@ const App = () => {
   }
 
   // create a notification popup on success or error
-  const createNotification = (message, type) => {
+  const createNotification = (message, type='error') => {
     setNotificationMessage(message)
     setNotificationType(type)
 
@@ -117,12 +117,12 @@ const App = () => {
               setNewNumber('')
             })
             .catch(error => {
-              createNotification(error.response.data.error)
+              createNotification(error.response.data.error, 'error')
             })
         }
       })
       .catch(error => {
-        createNotification(error.response.data.error)
+        createNotification(error.response.data.error, 'error')
       })
   }
 
