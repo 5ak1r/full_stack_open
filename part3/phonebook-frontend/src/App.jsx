@@ -122,7 +122,7 @@ const App = () => {
         }
       })
       .catch(error => {
-        console.log(error.response.data.error)
+        createNotification(error.response.data.error)
       })
   }
 
