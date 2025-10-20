@@ -3,11 +3,72 @@ const {test, describe, after, beforeEach} = require('node:test')
 
 const mongoose = require('mongoose')
 const supertest = require('supertest')
-const app = require('../app')
+const bcrypt = require('bcrypt')
+
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
+const app = require('../app')
 const api = supertest(app)
+
+let userId
+
+describe('when there is initially one user in the db', () => {
+  beforeEach(async () => {
+    await User.deleteMany({})
+
+    const passwordHash = await bcrypt.hash('sekret', 10)
+    const user = new User({username: 'root', passwordHash})
+
+    await user.save()
+
+    userId = user._id
+  })
+
+  test('creation succeeds with a fresh username', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'riko',
+      name: 'Robert Iko',
+      password: 'Baguette123!'
+    }
+
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
+
+    const usernames = usersAtEnd.map(u => u.username)
+    assert(usernames.includes(newUser.username))
+  })
+
+  test('creation fails with proper status code and message if username already taken', async () => {
+    const usersAtStart = await helper.usersInDb()
+
+    const newUser = {
+      username: 'root',
+      name: 'Superuser',
+      password: 'salainen'
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAtEnd = await helper.usersInDb()
+    assert(result.body.error.includes('expected `username` to be unique'))
+
+    assert.strictEqual(usersAtStart.length, usersAtEnd.length)
+  })
+})
 
 describe('when there are already blogs saved', () => {
   beforeEach(async () => {
@@ -79,7 +140,8 @@ describe('when there are already blogs saved', () => {
         title: 'The Third Blog',
         author:'The Third Author',
         url: 'the.third.url',
-        likes: 1000
+        likes: 1000,
+        userId: userId
       }
 
       await api
@@ -115,7 +177,7 @@ describe('when there are already blogs saved', () => {
       const newBlog = {
         title: 'The Fifth Blog',
         url: 'the.fifth.url',
-        likes: 0
+        likes: 0,
       }
 
       await api
@@ -148,6 +210,7 @@ describe('when there are already blogs saved', () => {
         title: 'The Seventh Blog',
         author: 'The Seventh Author',
         url: 'the.seventh.url',
+        userId: userId
       }
 
       await api
