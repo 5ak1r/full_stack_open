@@ -1,6 +1,6 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY4ZjY1YTMwYzk5NWNhMzgxZjk2NTdjZSIsImlhdCI6MTc2MDk4NTQxNX0.tuetWvS6X3GT_FqIyxpTpBeKvv6IRSyMTjink9HrpwQ
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InJvb3QiLCJpZCI6IjY4ZjY1YTMwYzk5NWNhMzgxZjk2NTdjZSIsImlhdCI6MTc2MTIzMTE4MiwiZXhwIjoxNzYxMjM0NzgyfQ.0nbiLWUuInLIZlemR84b7M9MqSXfVhcYHz8D4D0tbJk
 
 {
     "title": "The Second Blog",

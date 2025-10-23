@@ -6,7 +6,7 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 const getTokenFrom = request => {
-  const authorisation = request.get('authorisation')
+  const authorisation = request.get('authorization')
 
   if (authorisation && authorisation.startsWith('Bearer ')) {
     return authorisation.replace('Bearer ', '')
@@ -32,7 +32,7 @@ blogsRouter.get('/:id', async (request, response) => {
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
   const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-
+  console.log(decodedToken)
   if(!decodedToken.id) {
     return response.status(401).json({error: 'token invalid'})
   }
