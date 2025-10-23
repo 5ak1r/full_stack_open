@@ -13,6 +13,7 @@ const app = require('../app')
 const api = supertest(app)
 
 let userId
+let token
 
 describe('when there is initially one user in the db', () => {
   beforeEach(async () => {
@@ -23,7 +24,12 @@ describe('when there is initially one user in the db', () => {
 
     await user.save()
 
+    const login = await api
+      .post('/api/login')
+      .send({username: 'root', password: 'sekret'})
+
     userId = user._id
+    token = login.body.token
   })
 
   test('creation succeeds with a fresh username', async () => {
@@ -146,6 +152,7 @@ describe('when there are already blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -166,6 +173,7 @@ describe('when there are already blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 
@@ -182,6 +190,7 @@ describe('when there are already blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 
@@ -198,6 +207,7 @@ describe('when there are already blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(400)
 
@@ -215,29 +225,61 @@ describe('when there are already blogs saved', () => {
 
       await api
         .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
         .send(newBlog)
         .expect(201)
 
       const blogsAtEnd = await helper.blogsInDb()
       assert.strictEqual(blogsAtEnd.at(-1).likes, 0)
     })
+
+    test('fails without valid token', async () => {
+      const blogsAtStart = await Blog.find({})
+
+      const newBlog = {
+        title: 'The Eighth Blog',
+        author: 'The Eighth Blog',
+        url: 'the.eighth.url',
+        likes: 223
+      }
+
+      await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(401)
+
+      const blogsAtEnd = await Blog.find({})
+      assert.strictEqual(blogsAtStart.length, blogsAtEnd.length)
+    })
   })
 
   describe('deletion of a blog', async () => {
     test('a blog can be deleted', async () => {
-      const blogsAtStart = await helper.blogsInDb()
-      const blogToDelete = blogsAtStart[0]
+      const deleteBlog = {
+        title: 'Delete Me',
+        author: 'John Deletion',
+        url: 'http://example.com/delete-me',
+        likes: 5
+      }
+
+      const createBlog = await api
+        .post('/api/blogs')
+        .set('Authorization', `Bearer ${token}`)
+        .send(deleteBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+      const deleteMe = createBlog.body
 
       await api
-        .delete(`/api/blogs/${blogToDelete.id}`)
+        .delete(`/api/blogs/${deleteMe.id}`)
+        .set('Authorization', `Bearer ${token}`)
         .expect(204)
 
       const blogsAtEnd = await helper.blogsInDb()
 
-      const urls = blogsAtEnd.map(b => b.url)
-      assert(!urls.includes(blogToDelete.url))
-
-      assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length - 1)
+      const urls = blogsAtEnd.map(u => u.url)
+      assert(!urls.includes(deleteMe.url))
     })
   })
 })
