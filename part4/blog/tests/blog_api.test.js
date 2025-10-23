@@ -134,7 +134,7 @@ describe('when there are already blogs saved', () => {
     })
   })
 
-  describe('addition of a new note', () => {
+  describe('addition of a new blog', () => {
     test('succeeds with valid data', async () => {
       const newBlog = {
         title: 'The Third Blog',
@@ -223,7 +223,7 @@ describe('when there are already blogs saved', () => {
     })
   })
 
-  describe('deletion of a note', async () => {
+  describe('deletion of a blog', async () => {
     test('a blog can be deleted', async () => {
       const blogsAtStart = await helper.blogsInDb()
       const blogToDelete = blogsAtStart[0]

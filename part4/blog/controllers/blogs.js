@@ -6,17 +6,19 @@ const Blog = require('../models/blog')
 const User = require('../models/user')
 
 const getTokenFrom = request => {
-  const authorisation = request.get('authorization')
+  const authorization = request.get('authorization')
 
-  if (authorisation && authorisation.startsWith('Bearer ')) {
-    return authorisation.replace('Bearer ', '')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
   }
 
   return null
 }
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog
+    .find({})
+    .populate('user')
   response.json(blogs)
 })
 
@@ -47,7 +49,7 @@ blogsRouter.post('/', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
+    user: user.id
   })
 
   const savedBlog = await blog.save()
